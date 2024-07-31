@@ -7,7 +7,7 @@ export const getTokens = async (code: string) =>
         'https://accounts.spotify.com/api/token',
         new URLSearchParams({
             code,
-            redirect_uri: 'http://localhost:3000/api/auth/callback/spotify',
+            redirect_uri: `${process.env.REDIRECT_URI}/api/auth/callback/spotify`,
             grant_type: 'authorization_code',
         }).toString(),
         {
