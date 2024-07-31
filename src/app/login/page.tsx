@@ -14,7 +14,7 @@ export default function Home() {
                 alt="sad emoji"
             />
             <a
-                href="https://accounts.spotify.com/authorize?client_id=bec196b7845a4d80b09c4bd4fe7780ec&response_type=code&redirect_uri=http://localhost:3000/api/auth/callback/spotify&scope=user-read-currently-playing%20user-top-read"
+                href={`https://accounts.spotify.com/authorize?client_id=bec196b7845a4d80b09c4bd4fe7780ec&response_type=code&redirect_uri=${process.env.REDIRECT_URI}/api/auth/callback/spotify&scope=user-read-currently-playing%20user-top-read`}
                 className="shadow-primary w-56 h-16 rounded-xl bg-white border-0 text-black text-3xl active:scale-[0.99]">
                 Sign In
             </a>
