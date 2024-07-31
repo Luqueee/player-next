@@ -34,10 +34,10 @@ export default function Home() {
     };
 
     return (
-        <div className="w-[70%] min-h-4 mx-auto  flex justify-between py-4 gap-8 items-start flex-col-reverse md:lg:flex-row flex-nowrap">
+        <div className="w-[70%] min-h-4 mx-auto flex justify-between py-4 gap-8 items-start flex-col-reverse md:lg:flex-row flex-nowrap">
             <div
                 id="searchResult"
-                className=" flex md:lg:w-[50%] w-full md:lg:pt-0 py-24 max-h-[100vh] overflow-y-scroll scroll-smooth flex-col gap-4">
+                className=" flex md:lg:w-[50%] w-full md:lg:pt-0 py-24  max-h-[100vh] overflow-y-scroll scroll-smooth flex-col gap-4">
                 {results?.tracks.items.map((track: any) => (
                     <TrackCard key={track.id} track={track} />
                 ))}
@@ -49,7 +49,7 @@ export default function Home() {
                     value={term}
                     placeholder="Search for a song..."
                     onChange={handleInput}
-                    className=" ring-none border-none outline-none p-2 w-full h-16 text-2xl antialiased bg-opacity-20 bg-zinc-900/20 backdrop-blur-sm ring-0 ring-zinc-900/50 focus:ring-4 hover:ring-1 transition-all duration-500 text-white rounded-xl border-0 shadow-primary"
+                    className=" ring-none border-none outline-none p-2 w-full h-16 text-2xl antialiased bg-opacity-20 bg-zinc-900/50 backdrop-blur-sm ring-0 ring-zinc-900/70 focus:ring-4 hover:ring-1 transition-all duration-500 text-white rounded-xl border-0 shadow-primary"
                 />
             </div>
         </div>
