@@ -1,10 +1,11 @@
 'use client';
 import { useSearch } from '@/app/hooks/hooks';
-
 import { useDebounce } from '@/app/hooks/hooks';
 import { useMusicSearchStore } from '@/app/stores/musicStore';
 import { useState, useRef } from 'react';
 import TrackCard from '../components/TrackCard';
+import { fetchSpotifyTokens } from './lib/spotify';
+import { redirect } from 'next/navigation';
 
 //TODO: Hacer que cada boton tenga un handler que haga un fetch a la api de youtube y devuelva el video de la cancion
 //TODO: Hacer un middleware para refrescar el access token de spotify :)
@@ -13,6 +14,7 @@ export default function Home() {
     const { searchTerm, setSearchTerm } = useMusicSearchStore(
         (state: any) => state
     );
+
     const { results, handleSearch } = useSearch();
 
     const [term, setTerm] = useState<string>('');

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMusicSearchStore } from '@/app/stores/musicStore';
 import axios from 'axios';
-import { refreshToken } from '../lib/spotify';
+import { fetchSpotifyTokens } from '../lib/spotify';
 
 export const useDebounce = (callback: any, delay: number) => {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -43,7 +43,7 @@ export const useSearch = () => {
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                refreshToken();
+                fetchSpotifyTokens();
                 console.error('Axios error response:', error.response?.data);
                 console.error('Request config:', error.config);
             } else {

@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 export const getTokens = async (code: string) =>
     axios.post(
         'https://accounts.spotify.com/api/token',
@@ -21,6 +22,12 @@ export const getTokens = async (code: string) =>
             },
         }
     );
+
+export const fetchSpotifyTokens = async () => {
+    return redirect(
+        `https://accounts.spotify.com/authorize?client_id=bec196b7845a4d80b09c4bd4fe7780ec&response_type=code&redirect_uri=${process.env.REDIRECT_URI}/api/auth/callback/spotify&scope=user-read-currently-playing%20user-top-read`
+    );
+};
 
 export const accessToken = async () => {
     const cookieStore = cookies();
@@ -73,6 +80,7 @@ export const getReqSpotify = async (url: string) => {
         return response.data; // Ensure the response is returned as JSON
     } catch (error) {
         if (axios.isAxiosError(error)) {
+            fetchSpotifyTokens();
             console.error('Axios error response:', error.response?.data);
         } else {
             console.error('Error searching for song:', error);
@@ -82,9 +90,13 @@ export const getReqSpotify = async (url: string) => {
 };
 
 export const search = async (songname: string) => {
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        songname
-    )}&type=track`;
-    console.log('Request URL:', url);
-    return getReqSpotify(url);
+    try {
+        const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+            songname
+        )}&type=track`;
+        console.log('Request URL:', url);
+        return getReqSpotify(url);
+    } catch (error) {
+        refreshToken();
+    }
 };
