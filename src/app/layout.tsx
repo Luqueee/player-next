@@ -28,6 +28,8 @@ export default function RootLayout({
                     draggable={false}
                     priority
                     quality={100}
+                    decoding="async"
+                    loading="eager"
                     fill
                     style={{ width: '100%', height: '100%' }}
                     className="object-cover fixed opacity-50 inset-0 blur-sm -z-10"
