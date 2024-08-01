@@ -40,6 +40,7 @@ export const useSearch = () => {
             const response = await axios.get('/api/spotify/search', {
                 params: { song: searchTerm },
             });
+            console.log('response', response.data);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

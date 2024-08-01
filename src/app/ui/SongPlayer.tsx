@@ -111,7 +111,7 @@ const CurrentSong = ({
     artists: { name: string }[]; // Assuming artists is an array of objects with a name property
 }) => {
     const handleClick = () => {
-        window.location.href = `/song/${id}`;
+        window.location.href = `https://open.spotify.com/intl-es/track/${id}`;
     };
 
     // Convert artists array to a string of names
@@ -139,11 +139,12 @@ const CurrentSong = ({
 
             <div className="flex flex-col justify-start gap-2 h-full z-50">
                 <a
-                    href={`/song/${id}`}
-                    className="font-semibold text-sm block hover:underline text-start transition-all">
+                    target="_blank"
+                    href={`https://open.spotify.com/intl-es/track/${id}`}
+                    className="font-semibold text-sm line-clamp-2 block hover:underline text-start transition-all">
                     <p>{title}</p>
                 </a>
-                <span className="text-xs text-start opacity-80">
+                <span className="text-xs line-clamp-1 text-start opacity-80">
                     {artistNames}
                 </span>
             </div>
@@ -155,7 +156,6 @@ export default function SongPlayer() {
     const {
         dataVideo,
         volume,
-        setVolume,
         dataSpoty,
         currentTime,
         setCurrentTime,
@@ -182,12 +182,11 @@ export default function SongPlayer() {
     }, [audioRef, setCurrentTime]);
 
     const handleTimeUpdate = (e: any) => {
-        console.log(e);
         setCurrentTime(e.playedSeconds);
     };
 
     const handleDuration = (duration: any) => {
-        console.log('Duration:', duration);
+        //console.log('Duration:', duration);
         setDuration(duration);
     };
 
@@ -234,14 +233,14 @@ export default function SongPlayer() {
                     />
                 </>
             )}
-            <div className="flex w-full h-full justify-between px-8 items-center">
+            <div className="flex w-full h-full relative justify-between px-8 items-center">
                 <CurrentSong
                     title={dataSpoty.name}
                     image={dataSpoty.album?.images[0].url}
                     id={dataSpoty.id}
                     artists={handleArtists()}
                 />
-                <div className=" w-fit flex gap-4 items-center">
+                <div className=" w-fit flex absolute left-0 right-0 m-auto gap-4 items-center">
                     <button
                         title="Play / Pause"
                         name="play-button"
@@ -271,9 +270,8 @@ export default function SongPlayer() {
                             {duration ? formatTime(duration) : '0:00'}
                         </span>
                     </div>
+                    <VolumeControl />
                 </div>
-
-                <VolumeControl />
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import { useDebounce } from '@/app/hooks/hooks';
 import { useMusicSearchStore } from '@/app/stores/musicStore';
 import { useState, useRef } from 'react';
 import TrackCard from '../components/TrackCard';
+import ArstistCard from '@/components/ArtistCard';
 import { fetchSpotifyTokens } from './lib/spotify';
 import { redirect } from 'next/navigation';
 
@@ -34,15 +35,22 @@ export default function Home() {
     };
 
     return (
-        <div className="w-[70%] min-h-4 mx-auto flex justify-between py-4 gap-8 items-start flex-col-reverse md:lg:flex-row flex-nowrap">
+        <div className="w-[70%] z-50 min-h-4 mx-auto flex justify-between py-4 gap-8 items-start flex-col-reverse md:lg:flex-row flex-nowrap">
             <div
                 id="searchResult"
                 className=" flex md:lg:w-[50%] w-full md:lg:pt-0 py-24  max-h-[100vh] overflow-y-scroll scroll-smooth flex-col gap-4">
                 {results?.tracks.items.map((track: any) => (
                     <TrackCard key={track.id} track={track} />
                 ))}
+                {results?.artists.items.map((artist: any) => (
+                    //console.log('Artist:', artist),
+                    <ArstistCard key={artist.id} track={artist} />
+                ))}
             </div>
-            <div className=" flex md:lg:relative fixed left-4 mx-8 right-4 md:lg:top-16 top-4 flex-grow md:lg:h-full h-fit nd:lg:py-28 py-2 gap-4">
+            <div className=" flex md:lg:relative fixed flex-col left-4 mx-8 right-4 md:lg:top-16 top-4 flex-grow md:lg:h-full h-fit nd:lg:py-28 py-2 gap-4">
+                <p className=" hidden md:lg:block text-xl font-bold">
+                    Busca una cancion:
+                </p>
                 <input
                     type="text"
                     ref={inputRef}

@@ -15,6 +15,7 @@ export default function TrackCard(track: any) {
             }`
         );
         console.log(response);
+        console.log('Track:', track);
         setDataVideo(response);
         setDataSpoty(track.track);
         setPlaying(true);
@@ -25,7 +26,7 @@ export default function TrackCard(track: any) {
         <button
             onClick={handleSearch}
             key={track.track.id}
-            className="flex h-24 hover:h-32 group gap-4 opacity-50 md:lg:w-fit md:lg:pr-8 pr-0 w-full hover:opacity-100 items-center transition-all duration-500 ease-in-out">
+            className="flex min-h-20 hover:min-h-32 group gap-4 opacity-70 md:lg:w-fit md:lg:pr-8 pr-0 w-full hover:opacity-100 items-center transition-all duration-500 ease-in-out">
             <Image
                 src={track.track.album?.images[0].url}
                 alt={track.track.name}
