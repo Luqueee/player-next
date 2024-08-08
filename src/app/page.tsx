@@ -5,7 +5,8 @@ import { useMusicSearchStore } from '@/app/stores/musicStore';
 import { useState, useRef } from 'react';
 import TrackCard from '../components/TrackCard';
 import ArstistCard from '@/components/ArtistCard';
-import { fetchSpotifyTokens } from './lib/spotify';
+import { getAccessToken, removeAccesToken } from './lib/spotify';
+
 import { redirect } from 'next/navigation';
 
 //TODO: Hacer que cada boton tenga un handler que haga un fetch a la api de youtube y devuelva el video de la cancion
@@ -26,6 +27,15 @@ export default function Home() {
         handleSearch();
     }, 200);
 
+    const handleAccesTokens = async () => {
+        const res = await getAccessToken();
+        console.log(res);
+    };
+
+    const handleRemoveAccesTokens = async () => {
+        removeAccesToken();
+    };
+
     const handleInput = (e: any) => {
         e.preventDefault();
         console.log('Searching for:', e.target.value);
@@ -39,10 +49,10 @@ export default function Home() {
             <div
                 id="searchResult"
                 className=" flex md:lg:w-[50%] w-full md:lg:pt-0 py-24  max-h-[100vh] overflow-y-scroll scroll-smooth flex-col gap-4">
-                {results?.tracks.items.map((track: any) => (
+                {results?.tracks?.items.map((track: any) => (
                     <TrackCard key={track.id} track={track} />
                 ))}
-                {results?.artists.items.map((artist: any) => (
+                {results?.artists?.items.map((artist: any) => (
                     //console.log('Artist:', artist),
                     <ArstistCard key={artist.id} track={artist} />
                 ))}
@@ -59,6 +69,18 @@ export default function Home() {
                     onChange={handleInput}
                     className=" ring-none border-none outline-none p-2 w-full h-16 text-2xl antialiased bg-opacity-20 bg-zinc-900/50 backdrop-blur-sm ring-0 ring-zinc-900/70 focus:ring-4 hover:ring-1 transition-all duration-500 text-white rounded-xl border-0 shadow-primary"
                 />
+                <div className=" grid grid-cols-3 gap-2">
+                    <button
+                        onClick={handleAccesTokens}
+                        className="border-2 border-white">
+                        Get access tokens
+                    </button>
+                    <button
+                        onClick={handleRemoveAccesTokens}
+                        className="border-2 border-white">
+                        Remove access token
+                    </button>
+                </div>
             </div>
         </div>
     );

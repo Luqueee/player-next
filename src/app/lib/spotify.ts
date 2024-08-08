@@ -3,100 +3,62 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-export const getTokens = async (code: string) =>
-    axios.post(
-        'https://accounts.spotify.com/api/token',
-        new URLSearchParams({
-            code,
-            redirect_uri: `${process.env.REDIRECT_URI}/api/auth/callback/spotify`,
-            grant_type: 'authorization_code',
-        }).toString(),
-        {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: `Basic ${Buffer.from(
-                    `${process.env.SPOTIFY_CLIENT_ID as string}:${
-                        process.env.SPOTIFY_CLIENT_SECRET as string
-                    }`
-                ).toString('base64')}`,
-            },
-        }
-    );
 
-export const fetchSpotifyTokens = async () => {
-    return redirect(
-        `https://accounts.spotify.com/authorize?client_id=bec196b7845a4d80b09c4bd4fe7780ec&response_type=code&redirect_uri=${process.env.REDIRECT_URI}/api/auth/callback/spotify&scope=user-read-currently-playing%20user-top-read`
-    );
+export const getAccessToken = async () => {
+    const access_token = cookies().get('access_token');
+    return access_token;
 };
 
-export const accessToken = async () => {
-    const cookieStore = cookies();
-
-    const access_token = cookieStore.get('access_token');
-    const refresh_token = cookieStore.get('refresh_token');
-    if (!access_token || !refresh_token) {
-        return null;
-    }
-    return { access_token, refresh_token };
+export const removeAccesToken = async () => {
+    cookies().delete('access_token');
 };
 
 export const refreshToken = async () => {
+    const response = await fetch('https://open.spotify.com/get_access_token', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    });
+
+    const data = await response.json();
+    console.log('Creating Access Token:', data);
+    cookies().set('access_token', data.accessToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+    });
+    return data;
+};
+
+export async function searchSong(query: string) {
+    const access_token = await getAccessToken();
+    console.log('reading access token:', access_token);
+
+    // Your client-side search logic
     try {
-        const refresh_token = (await accessToken())?.refresh_token.value;
-        console.log('refresh_token:', refresh_token);
-        const response = await axios.post(
-            'https://accounts.spotify.com/api/token',
-            new URLSearchParams({
-                grant_type: 'refresh_token',
-                refresh_token: refresh_token ?? '',
-                client_id: process.env.SPOTIFY_CLIENT_ID as string,
-            }).toString(),
+        const response = await axios.get(
+            `https://api.spotify.com/v1/search?q=${query}&type=track%2Cartist`,
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    Authorization: `Bearer ${access_token?.value}`,
                 },
             }
         );
-        console.log('Refresh token response:', response.data);
+
         return response.data;
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const getReqSpotify = async (url: string) => {
-    const access_token = (await accessToken())?.access_token.value;
-    console.log('access_token:', access_token);
-    const authorizationHeader = access_token ? `Bearer ${access_token}` : '';
-    console.log('Authorization Header:', authorizationHeader);
-
-    try {
-        const response = await axios.get(url, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: authorizationHeader,
-            },
-        });
-        return response.data; // Ensure the response is returned as JSON
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            fetchSpotifyTokens();
+            if (error.response?.status == 401) {
+                refreshToken();
+                return searchSong(query);
+            }
             console.error('Axios error response:', error.response?.data);
+            console.error('Request config:', error.config);
         } else {
             console.error('Error searching for song:', error);
         }
-        await refreshToken();
+        throw error;
     }
-};
-
-export const search = async (songname: string) => {
-    try {
-        const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-            songname
-        )}&type=track%2Cartist`;
-        console.log('Request URL:', url);
-        return getReqSpotify(url);
-    } catch (error) {
-        refreshToken();
-    }
-};
+}

@@ -23,6 +23,7 @@
     "tailwindcss-animate": "^1.0.7",
     "youtube-dl-exec": "^3.0.7",
     "youtube-sr": "^4.3.11",
+    "youtubei.js": "^10.3.0",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

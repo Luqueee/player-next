@@ -1,18 +1,18 @@
+'use server';
+
 import { YouTube } from 'youtube-sr';
-import axios from 'axios';
+import { Innertube, UniversalCache } from 'youtubei.js';
+
 export async function YoutubeSearch(title: string) {
     try {
-        const response = await axios.get(`/api/youtube/song`, {
-            params: { song: title },
+        const yt = await Innertube.create({
+            cache: new UniversalCache(false),
         });
-        return response.data[0];
+        const data = await yt.search(title, { type: 'video' });
+        console.log('Youtube data2:', data);
+        return { data: JSON.parse(JSON.stringify(data)) };
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios error response:', error.response?.data);
-            console.error('Request config:', error.config);
-        } else {
-            console.error('Error searching for song:', error);
-        }
+        console.error('Error searching youtube:', error);
         throw error;
     }
 }

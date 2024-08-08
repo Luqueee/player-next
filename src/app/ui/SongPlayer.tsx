@@ -57,6 +57,44 @@ export const Volume = () => (
     </svg>
 );
 
+export const Next = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M5 12l14 0" />
+        <path d="M15 16l4 -4" />
+        <path d="M15 8l4 4" />
+    </svg>
+);
+
+export const Previous = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M5 12l14 0" />
+        <path d="M5 12l4 4" />
+        <path d="M5 12l4 -4" />
+    </svg>
+);
+
 const VolumeControl = () => {
     // ...
 
@@ -157,6 +195,8 @@ export default function SongPlayer() {
         dataVideo,
         volume,
         dataSpoty,
+        indexSong,
+        setIndexSong,
         currentTime,
         setCurrentTime,
         setDuration,
@@ -207,6 +247,24 @@ export default function SongPlayer() {
         setPlaying(false);
     };
 
+    const handleNext = () => {
+        console.log('Next');
+        if (indexSong >= dataVideo.length - 1) {
+            setIndexSong(1);
+            return;
+        }
+        setIndexSong(indexSong + 1);
+    };
+
+    const handlePrevious = () => {
+        console.log('Next');
+        if (indexSong <= dataVideo.length - 1) {
+            setIndexSong(dataVideo.length - 1);
+            return;
+        }
+        setIndexSong(indexSong - 1);
+    };
+
     const handleArtists = () => {
         return (
             dataSpoty.artists?.map((artist: any) => artist.name).join(', ') ??
@@ -214,8 +272,8 @@ export default function SongPlayer() {
         );
     };
     useEffect(() => {
-        setUrl(dataVideo?.shorts_url);
-    }, [dataVideo]);
+        setUrl(dataVideo[indexSong]?.shorts_url);
+    }, [dataVideo, indexSong]);
 
     return (
         <div className="flex flex-row justify-between relative items-center min-h-20 w-full z-50 ring-white ring-1 ring-opacity-5 bg-zinc-900 backdrop-blur-[2px] bg-opacity-5 py-2 shadow-lg h-full">
@@ -228,7 +286,7 @@ export default function SongPlayer() {
                         onEnded={handleEnd}
                         onProgress={handleTimeUpdate}
                         volume={volume}
-                        url={url}
+                        url={`https://www.youtube.com/watch?v=${dataVideo[indexSong]?.id}`}
                         className="hidden"
                     />
                 </>
@@ -242,11 +300,25 @@ export default function SongPlayer() {
                 />
                 <div className=" w-fit flex absolute left-0 right-0 m-auto gap-4 items-center">
                     <button
+                        title="Next"
+                        name="play-button"
+                        onClick={handlePrevious}
+                        className="bg-white text-black rounded-full p-1">
+                        <Previous />
+                    </button>
+                    <button
                         title="Play / Pause"
                         name="play-button"
                         onClick={handlePlay}
                         className="bg-white rounded-full p-2">
                         {playing ? <Pause /> : <Play />}
+                    </button>
+                    <button
+                        title="Next"
+                        name="play-button"
+                        onClick={handleNext}
+                        className="bg-white text-black rounded-full p-1">
+                        <Next />
                     </button>
 
                     <div className="flex gap-x-3 text-xs md:lg:justify-start justify-center">

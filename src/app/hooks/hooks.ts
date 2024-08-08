@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useMusicSearchStore } from '@/app/stores/musicStore';
-import axios from 'axios';
-import { fetchSpotifyTokens } from '../lib/spotify';
+import { searchSong } from '../lib/spotify';
 
 export const useDebounce = (callback: any, delay: number) => {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -36,29 +35,14 @@ export const useSearch = () => {
     const [results, setResults] = useState<any>(null);
 
     const search = async (searchTerm: string) => {
-        try {
-            const response = await axios.get('/api/spotify/search', {
-                params: { song: searchTerm },
-            });
-            console.log('response', response.data);
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                fetchSpotifyTokens();
-                console.error('Axios error response:', error.response?.data);
-                console.error('Request config:', error.config);
-            } else {
-                console.error('Error searching for song:', error);
-            }
-            throw error;
-        }
+        const response = await searchSong(searchTerm);
+        return response;
     };
 
     const handleSearch = async () => {
         try {
             const data = await search(searchTerm);
-
-            console.log(data);
+            console.log('data', data);
             setResults(data);
         } catch (error) {
             console.error('Error during search:', error);
