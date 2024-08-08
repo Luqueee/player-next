@@ -35,6 +35,7 @@ export default function ArstistCard(artist: any) {
                 artist.track.images[0] &&
                 artist.track.images[0].url ? (
                     <Image
+                        unoptimized
                         src={artist.track.images[0].url}
                         alt={artist.track.name}
                         width={52}

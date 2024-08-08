@@ -12,6 +12,7 @@ export default function TrackCard(track: any) {
 
     const handleSearch = async () => {
         try {
+            console.log('Searching for:', track.track);
             const searchQuery = `${track.track.name as string} ${
                 track.track.artists[0].name as string
             } lyrics`;
@@ -45,11 +46,11 @@ export default function TrackCard(track: any) {
                         alt={track.track.name}
                         width={52}
                         height={52}
-                        style={{ width: 'auto', height: 'auto' }}
+                        style={{ width: '62px', height: '62px' }}
                         draggable={false}
                         loading="lazy"
                         decoding="async"
-                        className=" rounded-lg"
+                        className="rounded-lg"
                     />
                 ) : (
                     <FallBackImage />
