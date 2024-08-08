@@ -126,7 +126,7 @@ const VolumeControl = () => {
                 max={100}
                 min={0}
                 value={[volume * 100]}
-                className="w-[50px] md:lg:w-[150px] py-2"
+                className="w-[50px] md:lg:w-[80px] py-2"
                 onValueChange={(value) => {
                     const [newVolume] = value;
                     const volumeValue = newVolume / 100;
@@ -288,6 +288,7 @@ export default function SongPlayer() {
                         volume={volume}
                         url={`https://www.youtube.com/watch?v=${dataVideo[indexSong]?.id}`}
                         className="hidden"
+                        config={{ file: { forceAudio: true } }}
                     />
                 </>
             )}
