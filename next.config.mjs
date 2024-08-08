@@ -7,6 +7,7 @@ const nextConfig = {
                 hostname: 'i.scdn.co',
             },
         ],
+        unoptimized: false,
     },
 };
 
