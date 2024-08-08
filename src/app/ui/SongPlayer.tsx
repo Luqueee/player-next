@@ -299,51 +299,54 @@ export default function SongPlayer() {
                     id={dataSpoty.id}
                     artists={handleArtists()}
                 />
-                <div className=" w-fit flex absolute left-0 right-0 m-auto gap-4 items-center">
-                    <button
-                        title="Next"
-                        name="play-button"
-                        onClick={handlePrevious}
-                        className="bg-white text-black rounded-full p-1">
-                        <Previous />
-                    </button>
-                    <button
-                        title="Play / Pause"
-                        name="play-button"
-                        onClick={handlePlay}
-                        className="bg-white rounded-full p-2">
-                        {playing ? <Pause /> : <Play />}
-                    </button>
-                    <button
-                        title="Next"
-                        name="play-button"
-                        onClick={handleNext}
-                        className="bg-white text-black rounded-full p-1">
-                        <Next />
-                    </button>
-
-                    <div className="flex gap-x-3 text-xs md:lg:justify-start justify-center">
-                        <span className="opacity-50 w-12 text-right">
-                            {formatTime(currentTime)}
-                        </span>
-
-                        <Slider
-                            value={[currentTime]}
-                            max={duration}
-                            min={0}
-                            className="md:lg:w-[200px] w-[100px] h-2 py-2"
-                            onValueChange={(value) => {
-                                const [newCurrentTime] = value;
-                                audioRef.current?.seekTo(newCurrentTime);
-                                setCurrentTime(newCurrentTime);
-                            }}
-                        />
-
-                        <span className="opacity-50 w-12">
-                            {duration ? formatTime(duration) : '0:00'}
-                        </span>
+                <div className=" w-fit flex md:lg:flex-row flex-col absolute left-0 right-0 m-auto gap-4 items-center">
+                    <div className=" flex gap-4">
+                        <button
+                            title="Next"
+                            name="play-button"
+                            onClick={handlePrevious}
+                            className="bg-white text-black rounded-full p-1">
+                            <Previous />
+                        </button>
+                        <button
+                            title="Play / Pause"
+                            name="play-button"
+                            onClick={handlePlay}
+                            className="bg-white rounded-full p-2">
+                            {playing ? <Pause /> : <Play />}
+                        </button>
+                        <button
+                            title="Next"
+                            name="play-button"
+                            onClick={handleNext}
+                            className="bg-white text-black rounded-full p-1">
+                            <Next />
+                        </button>
                     </div>
-                    <VolumeControl />
+                    <div className=" flex gap-4 items-center">
+                        <div className="flex gap-x-3 text-xs md:lg:justify-start justify-center">
+                            <span className="opacity-50 w-12 text-right">
+                                {formatTime(currentTime)}
+                            </span>
+
+                            <Slider
+                                value={[currentTime]}
+                                max={duration}
+                                min={0}
+                                className="md:lg:w-[200px] w-[100px] h-2 py-2"
+                                onValueChange={(value) => {
+                                    const [newCurrentTime] = value;
+                                    audioRef.current?.seekTo(newCurrentTime);
+                                    setCurrentTime(newCurrentTime);
+                                }}
+                            />
+
+                            <span className="opacity-50 w-12">
+                                {duration ? formatTime(duration) : '0:00'}
+                            </span>
+                        </div>
+                        <VolumeControl />
+                    </div>
                 </div>
             </div>
         </div>
