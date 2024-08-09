@@ -4,6 +4,7 @@ const useMusicSearchStore = create(
     persist(
         (set) => ({
             searchTerm: '',
+            searching: false,
             dataVideo: {},
             dataSpoty: {},
             currentTime: 0,
@@ -11,6 +12,7 @@ const useMusicSearchStore = create(
             volume: 1,
             indexSong: 1,
             setVolume: (volume: any) => set({ volume }),
+            setSearching: (searching: any) => set({ searching }),
             setDataSpoty: (dataSpoty: any) => set({ dataSpoty }),
             setSearchTerm: (searchTerm: any) => set({ searchTerm }),
             setCurrentTime: (currentTime: any) => set({ currentTime }),
@@ -29,7 +31,6 @@ export { useMusicSearchStore };
 
 const useSongBar = create((set) => ({
     playing: false,
-
     setPlaying: (playing: any) => set({ playing }),
 }));
 

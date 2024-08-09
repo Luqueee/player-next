@@ -17,23 +17,35 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark">
             <body
-                className={`${inter.className} overflow-hidden min-w-full min-h-full scroll-smooth`}>
-                <main className=" z-50">{children}</main>
-                <div className=" fixed bottom-0 left-0 right-0 overflow-hidden">
-                    <SongPlayer />
+                className={`${inter.className} overflow-hidden bg-[#181818] min-w-full min-h-full scroll-smooth`}>
+                <div id="app" className="relative h-screen gap-2">
+                    <aside className="[grid-area:aside] bg-[#1212124b] overflow-hidden backdrop-blur-sm  rounded-lg mx-4 pt-4 mt-4 max-h-full min-h-full flex flex-col items-center justify-center">
+                        <p>aaa</p>
+                        <p>aaa</p>
+                        <Image
+                            src={'/images/bg2.webp'}
+                            alt="bg"
+                            draggable={false}
+                            priority
+                            quality={100}
+                            decoding="async"
+                            loading="eager"
+                            fill
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                            className="object-cover grayscale object-center w-full fixed blur-sm opacity-50 inset-0 -z-10"
+                        />
+                    </aside>
+                    <main className="[grid-area:main] mt-4 px-4 z-50 overflow-hidden w-full h-full">
+                        {children}
+                    </main>
+
+                    <div className="[grid-area:player] h-[10vh] overflow-hidden">
+                        <SongPlayer />
+                    </div>
                 </div>
-                <Image
-                    src={'/images/bg.webp'}
-                    alt="bg"
-                    draggable={false}
-                    priority
-                    quality={100}
-                    decoding="async"
-                    loading="eager"
-                    fill
-                    style={{ width: '100%', height: '100%' }}
-                    className="object-cover fixed opacity-50 inset-0 blur-sm -z-10"
-                />
             </body>
         </html>
     );

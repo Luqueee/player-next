@@ -73,3 +73,32 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
+
+@media (width >= 750px) {
+    #app {
+        display: grid;
+        grid-template-areas:
+            'aside main main'
+            'player player player';
+        grid-template-columns: 160px 1fr;
+        grid-template-rows: 90vh auto;
+        gap: 1rem;
+    }
+}
+
+@media (width < 750px) {
+    #app {
+        display: grid;
+        grid-template-areas:
+            'aside'
+            'main'
+            'player';
+        grid-template-columns: 1fr;
+        grid-template-rows: 10vh 75vh 15vh;
+        gap: 1rem;
+    }
+}
+
+#track_songs::-webkit-scrollbar {
+    display: none;
+}

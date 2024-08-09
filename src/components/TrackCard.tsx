@@ -6,7 +6,7 @@ import { useMusicSearchStore, useSongBar } from '../app/stores/musicStore';
 import { YoutubeSearch } from '../app/lib/youtube';
 
 export default function TrackCard(track: any) {
-    const { searchTerm, setDataVideo, setIndexSong, setDataSpoty } =
+    const { setCurrentTime, setDataVideo, setIndexSong, setDataSpoty } =
         useMusicSearchStore((state: any) => state);
     const { playing, setPlaying } = useSongBar((state: any) => state);
 
@@ -16,18 +16,21 @@ export default function TrackCard(track: any) {
             const searchQuery = `${track.track.name as string} ${
                 track.track.artists[0].name as string
             } lyrics`;
-            const response = await YoutubeSearch(searchQuery);
 
-            console.log('response:', response.data);
+            const response = await YoutubeSearch(searchQuery);
+            console.log('Youtube data:', response);
             //setDataVideo(response.data);
             console.log('Track:', track);
-            setDataVideo(response.data.results);
+            setDataVideo(response);
             // Ensure track.track is a plain object
             const plainTrack = JSON.parse(JSON.stringify(track.track));
 
+            setIndexSong(0);
+            setCurrentTime(0);
             setDataSpoty(plainTrack);
-            setIndexSong(1);
-            setPlaying(true);
+            setTimeout(() => {
+                setPlaying(true);
+            }, 100);
         } catch (error) {
             console.error(error);
         }
@@ -38,7 +41,7 @@ export default function TrackCard(track: any) {
         <button
             onClick={handleSearch}
             key={track.track.id}
-            className="flex min-h-20 group gap-4 opacity-70 md:lg:w-fit md:lg:pr-8 pr-0 w-full hover:opacity-100 items-center transition-all duration-500 ease-in-out">
+            className="flex min-h-20 group gap-4 opacity-80 md:lg:w-fit md:lg:pr-8 pr-0 w-full hover:opacity-100 items-center transition-all duration-500 ease-in-out">
             <Suspense fallback={<FallBackImage />}>
                 {track.track.album.images.length >= 1 ? (
                     <Image

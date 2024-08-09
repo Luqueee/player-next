@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React, { use } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { useMusicSearchStore, useSongBar } from '../stores/musicStore';
-import ReactPlayer from 'react-player/lazy';
 import { Slider } from '@/components/ui/slider';
+import { config } from 'process';
 export const Play = ({ className = '' }: { className?: string }) => (
     <svg
         className={className ?? ''}
@@ -137,6 +138,63 @@ const VolumeControl = () => {
     );
 };
 
+const SongControl = ({ audio }: { audio: any }) => {
+    const { currentTime, setCurrentTime } = useMusicSearchStore(
+        (state: any) => state
+    );
+
+    useEffect(() => {
+        const handleTimeUpdate = () => {
+            setCurrentTime(audio.current.currentTime);
+        };
+
+        audio.current.addEventListener('timeupdate', handleTimeUpdate);
+
+        const interval = setInterval(() => {
+            setCurrentTime(audio.current.currentTime);
+        }, 100);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [audio, setCurrentTime]);
+
+    const formatTime = (time: GLfloat) => {
+        if (time == null) return `0:00`;
+
+        const seconds = Math.floor(time % 60);
+        const minutes = Math.floor(time / 60);
+
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    const duration = audio?.current?.duration ?? 0;
+
+    return (
+        <div className="flex gap-x-3 text-xs md:lg:justify-start justify-center">
+            <span className="opacity-50 w-12 text-right">
+                {formatTime(currentTime)}
+            </span>
+
+            <Slider
+                value={[currentTime]}
+                max={audio?.current?.duration ?? 0}
+                min={0}
+                className="md:lg:w-[200px] w-[100px] h-2 py-2"
+                onValueChange={(value) => {
+                    const [newCurrentTime] = value;
+                    audio.current.currentTime = newCurrentTime;
+                    currentTime;
+                }}
+            />
+
+            <span className="opacity-50 w-12">
+                {duration ? formatTime(duration) : '0:00'}
+            </span>
+        </div>
+    );
+};
+
 const CurrentSong = ({
     image,
     id,
@@ -160,12 +218,12 @@ const CurrentSong = ({
     return (
         <button
             onClick={handleClick}
-            className={` items-center hidden md:lg:flex gap-4 h-full w-96 z-[999999]`}>
+            className={` items-center group hidden md:lg:flex gap-4 h-full w-96 z-[999999]`}>
             {image ? (
                 <picture className="w-16 h-16 bg-zinc-800 rounded-md shadow-lg overflow-hidden object-cover">
                     <img
                         src={image}
-                        className="object-cover h-full w-full"
+                        className="object-cover h-full group-hover:scale-110 transition-all duration-500 w-full"
                         alt={title}
                         decoding="async"
                         loading="eager"
@@ -175,7 +233,7 @@ const CurrentSong = ({
                 <div className="w-16 h-16 bg-zinc-800 rounded-md shadow-lg overflow-hidden"></div>
             )}
 
-            <div className="flex flex-col justify-start gap-2 h-full z-50">
+            <div className="flex flex-col justify-center gap-2 h-full z-50">
                 <a
                     target="_blank"
                     href={`https://open.spotify.com/intl-es/track/${id}`}
@@ -190,61 +248,116 @@ const CurrentSong = ({
     );
 };
 export default function SongPlayer() {
-    const [url, setUrl] = useState('');
     const {
         dataVideo,
         volume,
         dataSpoty,
+        searching,
         indexSong,
         setIndexSong,
         currentTime,
         setCurrentTime,
-        setDuration,
-        duration,
     } = useMusicSearchStore((state: any) => state);
     const { playing, setPlaying } = useSongBar((state: any) => state);
 
-    const audioRef = useRef<ReactPlayer>(null);
-    const [isClient, setIsClient] = useState(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
 
     useEffect(() => {
-        setIsClient(true);
-    }, []);
+        if (!playing) {
+            audioRef.current!.pause();
+        } else {
+            audioRef
+                .current!.play()
+                .catch((error) =>
+                    console.error('Error playing the audio:', error.message)
+                );
+        }
+    }, [playing]);
+
+    // useEffect(() => {
+    //     window.addEventListener('beforeunload', setIsPlayingBar(false));
+    //     return () => {
+    //         window.removeEventListener('beforeunload', setIsPlayingBar(false));
+    //     };
+    // }, []);
 
     useEffect(() => {
-        const interval = setTimeout(() => {
-            setCurrentTime(audioRef.current?.getCurrentTime());
+        const interval = setInterval(() => {
+            if (audioRef.current!.ended) {
+                setPlaying(false);
+                audioRef.current!.currentTime = 0;
+            }
         }, 100);
 
         return () => {
-            clearTimeout(interval);
+            clearInterval(interval);
         };
-    }, [audioRef, setCurrentTime]);
+    }, [audioRef, setPlaying]);
 
-    const handleTimeUpdate = (e: any) => {
-        setCurrentTime(e.playedSeconds);
-    };
+    useEffect(() => {
+        const configMusicInitial = () => {
+            const url = dataVideo.url;
+            audioRef.current!.volume = volume;
 
-    const handleDuration = (duration: any) => {
-        //console.log('Duration:', duration);
-        setDuration(duration);
-    };
+            //console.log(volume);
+            //console.log(song_data);
+            try {
+                if (url) {
+                    //console.log('new', currentMusic, previousID);
+                    audioRef.current!.src = url; // Change the source
+                    audioRef.current!.load(); // Load the new source
+                    audioRef.current!.currentTime = currentTime;
+                    if (playing) {
+                        try {
+                            audioRef.current!.play().catch(() =>
+                                // Play if it was playing before
+                                console.error('el audio no se pudo reproducir:')
+                            );
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading audio:', error);
+            }
+        };
 
-    const handlePlay = () => {
+        configMusicInitial();
+    }, [dataVideo]);
+
+    useEffect(() => {
+        const togglePlayPause = (event: any) => {
+            if (event.keyCode === 32 && searching == false) {
+                //console.log(searching);
+                // 32 es el código de la tecla de espacio
+                event.preventDefault();
+                setPlaying(!playing); // Alternar entre pausa y reproducción
+            }
+        };
+
+        // Agregar el escuchador de eventos
+        document.addEventListener('keydown', togglePlayPause);
+
+        // Limpiar el escuchador al desmontar el componente
+        return () => {
+            document.removeEventListener('keydown', togglePlayPause);
+        };
+    }, [playing, searching, setPlaying]); // Dependencias del efecto
+
+    useEffect(() => {
+        audioRef.current!.volume = volume;
+    }, [volume]);
+
+    const handleClick = () => {
         setPlaying(!playing);
     };
 
-    const formatTime = (time: any) => {
-        if (time == null) return `0:00`;
-
-        const seconds = Math.floor(time % 60);
-        const minutes = Math.floor(time / 60);
-
-        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    };
-
-    const handleEnd = () => {
-        setPlaying(false);
+    const handleArtists = () => {
+        return (
+            dataSpoty.artists?.map((artist: any) => artist.name).join(', ') ??
+            ''
+        );
     };
 
     const handleNext = () => {
@@ -265,33 +378,8 @@ export default function SongPlayer() {
         setIndexSong(indexSong - 1);
     };
 
-    const handleArtists = () => {
-        return (
-            dataSpoty.artists?.map((artist: any) => artist.name).join(', ') ??
-            ''
-        );
-    };
-    useEffect(() => {
-        setUrl(dataVideo[indexSong]?.shorts_url);
-    }, [dataVideo, indexSong]);
-
     return (
-        <div className="flex flex-row justify-between relative items-center min-h-20 w-full z-50 ring-white ring-1 ring-opacity-5 bg-zinc-900 backdrop-blur-[2px] bg-opacity-5 py-2 shadow-lg h-full">
-            {isClient && (
-                <>
-                    <ReactPlayer
-                        ref={audioRef}
-                        playing={playing}
-                        onDuration={handleDuration}
-                        onEnded={handleEnd}
-                        onProgress={handleTimeUpdate}
-                        volume={volume}
-                        url={`https://www.youtube.com/watch?v=${dataVideo[indexSong]?.id}`}
-                        className="hidden"
-                        config={{ file: { forceAudio: true } }}
-                    />
-                </>
-            )}
+        <div className="flex flex-row justify-between relative items-center min-h-20 w-full z-50 ring-white ring-2 ring-opacity-30 bg-zinc-900 backdrop-blur-[2px] bg-opacity-5 py-2 shadow-lg h-full">
             <div className="flex w-full h-full relative justify-between px-8 items-center">
                 <CurrentSong
                     title={dataSpoty.name}
@@ -311,7 +399,7 @@ export default function SongPlayer() {
                         <button
                             title="Play / Pause"
                             name="play-button"
-                            onClick={handlePlay}
+                            onClick={handleClick}
                             className="bg-white rounded-full p-2">
                             {playing ? <Pause /> : <Play />}
                         </button>
@@ -325,30 +413,23 @@ export default function SongPlayer() {
                     </div>
                     <div className=" flex gap-4 items-center">
                         <div className="flex gap-x-3 text-xs md:lg:justify-start justify-center">
-                            <span className="opacity-50 w-12 text-right">
-                                {formatTime(currentTime)}
-                            </span>
-
-                            <Slider
-                                value={[currentTime]}
-                                max={duration}
-                                min={0}
-                                className="md:lg:w-[200px] w-[100px] h-2 py-2"
-                                onValueChange={(value) => {
-                                    const [newCurrentTime] = value;
-                                    audioRef.current?.seekTo(newCurrentTime);
-                                    setCurrentTime(newCurrentTime);
-                                }}
-                            />
-
-                            <span className="opacity-50 w-12">
-                                {duration ? formatTime(duration) : '0:00'}
-                            </span>
+                            <SongControl audio={audioRef} />
                         </div>
                         <VolumeControl />
                     </div>
                 </div>
             </div>
+            <audio
+                ref={audioRef}
+                onError={() => console.error('Error loading audio')}>
+                <track
+                    kind="captions"
+                    src="captions.vtt"
+                    label="Spanish"
+                    default
+                />
+                Your browser does not support the audio element.
+            </audio>
         </div>
     );
 }
