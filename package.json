@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@biomejs/biome": "^1.8.3",
         "@radix-ui/react-slider": "^1.2.0",
         "axios": "^1.7.2",
         "class-variance-authority": "^0.7.0",

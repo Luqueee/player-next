@@ -218,9 +218,9 @@ const CurrentSong = ({
     return (
         <button
             onClick={handleClick}
-            className={` items-center group hidden md:lg:flex gap-4 h-full w-96 z-[999999]`}>
+            className={` items-center justify-center group my-auto hidden md:lg:flex gap-4 w-fit z-[999999]`}>
             {image ? (
-                <picture className="w-16 h-16 bg-zinc-800 rounded-md shadow-lg overflow-hidden object-cover">
+                <picture className="w-16 h-16 mb-2 bg-zinc-800 rounded-md shadow-lg overflow-hidden object-cover">
                     <img
                         src={image}
                         className="object-cover h-full group-hover:scale-110 transition-all duration-500 w-full"
@@ -379,8 +379,8 @@ export default function SongPlayer() {
     };
 
     return (
-        <div className="flex flex-row justify-between relative items-center min-h-20 w-full z-50 ring-white ring-2 ring-opacity-30 bg-zinc-900 backdrop-blur-[2px] bg-opacity-5 py-2 shadow-lg h-full">
-            <div className="flex w-full h-full relative justify-between px-8 items-center">
+        <div className="flex flex-row justify-center relative items-center w-full z-50 ring-white ring-2 ring-opacity-30 bg-zinc-900 backdrop-blur-[2px] bg-opacity-5 py-2 shadow-lg h-full">
+            <div className="flex w-full relative my-auto justify-between px-8 items-center">
                 <CurrentSong
                     title={dataSpoty.name}
                     image={dataSpoty.album?.images[0].url}

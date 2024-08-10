@@ -19,7 +19,7 @@ export default function RootLayout({
             <body
                 className={`${inter.className} overflow-hidden bg-[#181818] min-w-full min-h-full scroll-smooth`}>
                 <div id="app" className="relative h-screen gap-2">
-                    <aside className="[grid-area:aside] bg-[#1212124b] overflow-hidden backdrop-blur-sm  rounded-lg mx-4 pt-4 mt-4 max-h-full min-h-full flex flex-col items-center justify-center">
+                    <aside className="[grid-area:aside] bg-[#1212124b] overflow-hidden backdrop-blur-sm  rounded-lg ml-4 pt-4 mt-4 max-h-full min-h-full flex flex-col items-center justify-center">
                         <p>aaa</p>
                         <p>aaa</p>
                         <Image
@@ -38,11 +38,11 @@ export default function RootLayout({
                             className="object-cover grayscale object-center w-full fixed blur-sm opacity-50 inset-0 -z-10"
                         />
                     </aside>
-                    <main className="[grid-area:main] mt-4 px-4 z-50 overflow-hidden w-full h-full">
+                    <main className="[grid-area:main] mt-4 pr-4 z-50 overflow-hidden w-full h-full">
                         {children}
                     </main>
 
-                    <div className="[grid-area:player] h-[10vh] overflow-hidden">
+                    <div className="[grid-area:player] h-[10vh] flex items-center overflow-hidden">
                         <SongPlayer />
                     </div>
                 </div>

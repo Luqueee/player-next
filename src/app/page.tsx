@@ -92,7 +92,11 @@ export default function Home() {
 
                 <div
                     id="track_songs"
-                    className=" max-h-[90vh] pb-96 overflow-y-scroll">
+                    className=" max-h-[90vh] pb-96 overflow-y-scroll"
+                    style={{
+                        maskImage:
+                            'linear-gradient(to top, rgba(0, 0, 0, 0) 5%, rgba(0,0,0,1) 20%, rgba(0, 0, 0, 1) 100%)',
+                    }}>
                     {
                         //results?.map((element: any, index: number) => {
                         // <TrackCardYoutube key={index} track={element} />;
